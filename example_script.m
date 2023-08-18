@@ -13,8 +13,8 @@ spatial_res = 0.21; % microns/pixel, spatial resolution of line scan images
 
 %% Import Image
 
-[file, path] = uigetfile('*.tif');
-line_scan_image = imread(fullfile(path,file));
+line_scan_file = "Example Data.tif";
+line_scan_image = imread(line_scan_file);
 
 %% Find Ca Events
 
@@ -30,10 +30,12 @@ figure;
 subplot(1,2,1);
 hold on;
 plot(-avg_int_timeAx,0:(numel(avg_int_timeAx)-1),'k');
-plot([-cell_thresh,-cell_thresh],[0,numel(avg_int_timeAx)]);
+plot([-cell_thresh,-cell_thresh],[0,numel(avg_int_timeAx)],'r');
+xlabel("Average Ca^{2+} Signal");
+ylabel("Space");
 ylim([0,numel(avg_int_timeAx)]);
-legend(["Time Average Ca Trace","Cell Threshold"]);
-title("Time Average");
+legend(["Time Averaged Ca^{2+} Trace","Cell Threshold"]);
+title("Time-Averaged Signal");
 set(gca,'xticklabel',[],'yticklabel',[]);
 hold off;
 subplot(1,2,2);
@@ -45,7 +47,9 @@ for i_cell = 1:n_cells
 end
 legend(p,"Cell Outlines");
 title(sprintf("Full Line Scan (%i Cells)",n_cells));
+xlabel("Time");
 xlim([0,n_time]);
+ylabel("Space");
 padding = 10;
 ymax = n_space + (2 * padding);
 ylim([-padding,ymax]);
@@ -59,14 +63,15 @@ for i_cell = 1:n_cells
     subplot(2,1,1);
     imagesc(segmented_cells{i_cell}');
     title("Line Scan");
+    ylabel("Space");
     set(gca,'xticklabel',[],'yticklabel',[]);
     subplot(2,1,2);
     hold on; % tell Matlab you want to render multiple plots on the same graph
     plot(line_scan_avg_proc{i_cell},'k'); % line graph of 1D Ca intensity (y) over time (x)
     scatter(event_loc{i_cell}, event_int{i_cell},'filled','r'); % plot a dot for each Ca event
-    title("Ca^{2+} Trace " + "(" + num2str(n_events(i_cell)) + " events)");
+    title("Ca^{2+} Trace " + "(" + num2str(n_events(i_cell)) + " Events Detected)");
     xlabel("Time");
-    ylabel("Ca Intensity");
-    legend(["Ca Trace","Ca Events"]);
+    ylabel("Ca^{2+} Intensity");
+    legend(["Ca^{2+} Trace","Ca^{2+} Events"]);
     hold off;
 end
